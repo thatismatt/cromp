@@ -107,7 +107,9 @@
             for (p(); x.success; p()) {
                 result.push(x.result);
             }
-            return result.length >= (min || 0) ? success(result, s) : fail(state);
+            return result.length >= (min || 0)
+                ? success(result, s)
+                : fail(state);
         });
     };
 
