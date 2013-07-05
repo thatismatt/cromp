@@ -149,16 +149,16 @@ exports["parse simple calculator grammar"] = function (test) {
     var num = cromp.regex(/[0-9]+/).map(function (m) { return parseInt(m[0], 10); });
     var op1 = cromp.regex(/[+-]/).map(function (m) { return m[0]; });
     var op2 = cromp.regex(/[*\/]/).map(function (m) { return m[0]; });
-    function getTerm () { return term; } // late binding
-    var term = cromp.choose(
-        cromp.seq(num, op2, getTerm)
-            .map(function (x) { return { op: x[1], l: x[0], r: x[2] }; }),
-        num);
-    function getExpr () { return expr; } // late binding
-    var expr = cromp.choose(
-        cromp.seq(term, op1, getExpr)
-            .map(function (x) { return { op: x[1], l: x[0], r: x[2] }; }),
-        term);
+    var term = cromp.recursive(function () {
+        return cromp.choose(
+            cromp.seq(num, op2, term)
+                .map(function (x) { return { op: x[1], l: x[0], r: x[2] }; }),
+            num); });
+    var expr = cromp.recursive(function () {
+        return cromp.choose(
+            cromp.seq(term, op1, expr)
+                .map(function (x) { return { op: x[1], l: x[0], r: x[2] }; }),
+            term); });
     var parse = function (src) { return cromp.parse(expr, src); };
 
     var a = parse("1");
@@ -195,9 +195,9 @@ exports["parse left associative grammar"] = function (test) {
 exports["parse nested lists"] = function (test) {
     var open = cromp.character("(");
     var close = cromp.character(")");
-    function list_ () { return list; } // late binding
-    var list = cromp.seq(open, cromp.many(list_), close)
-            .map(function (x) { return x[1]; });
+    var list = cromp.recursive(function() {
+        return cromp.seq(open, cromp.many(list), close)
+            .map(function (x) { return x[1]; }); });
     var parse = function (src) { return cromp.parse(list, src); };
 
     var a = parse("()");
@@ -220,7 +220,7 @@ exports["parse nested lists"] = function (test) {
 // COMBINATORS
 // cromp.eof
 // cromp.not or notFollowedBy
-// cromp.many(min) or many1
+// cromp.many1
 // cromp.manyTill
 // cromp.whitespace
 // cromp.string

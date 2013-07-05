@@ -63,7 +63,6 @@
             return parsers.reduce(
                 function (agg, p) {
                     if (!agg.success) return agg;
-                    if (p.call) p = p();
                     var x = p.parse(agg.state);
                     return x.success
                         ? (agg.result.push(x.result),
@@ -92,7 +91,6 @@
 
     cromp.optional = function (parser) {
         return new Parser(function (state) {
-            //if (parser.call) parser = parser();
             var x = parser.parse(state);
             return success(x.result, x.state);
         });
@@ -100,7 +98,6 @@
 
     cromp.many = function (parser, min) {
         return new Parser(function (state) {
-            if (parser.call) parser = parser();
             var result = [];
             var x, s = state;
             function p () { x = parser.parse(s); s = x.state; }
@@ -161,5 +158,10 @@
             }
         });
     };
+
+    cromp.recursive = function (f) {
+        return new Parser(function (x) { return f().parse(x); });
+    };
+
 
 })(typeof exports === "undefined" ? this["cromp"] = {} : exports);
