@@ -1,6 +1,7 @@
 {
     "name": "cromp",
     "main": "cromp",
+    "version": "0.1.0",
     "devDependencies": {
         "nodeunit": "~0.8.0"
     },
