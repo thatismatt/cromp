@@ -133,6 +133,21 @@ exports["interpose parsing"] = function (test) {
     test.done();
 };
 
+exports["between parsing"] = function (test) {
+    var open = cromp.character("(");
+    var close = cromp.character(")");
+    var parser = cromp.between(open, close, cromp.character("a"));
+    var oac = cromp.parse(parser, "(a)");
+    var ac = cromp.parse(parser, "a)");
+    var oa = cromp.parse(parser, "(a");
+    var a = cromp.parse(parser, "a");
+    test.deepEqual("a", oac.result);
+    test.ok(!ac.success);
+    test.ok(!oa.success);
+    test.ok(!a.success);
+    test.done();
+};
+
 exports["parse regex"] = function (test) {
     var parser = cromp.regex(/[a-c]/);
     var a = cromp.parse(parser, "a");

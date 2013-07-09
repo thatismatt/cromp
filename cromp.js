@@ -163,5 +163,9 @@
         return new Parser(function (x) { return f().parse(x); });
     };
 
+    cromp.between = function (open, close, inner) {
+        return cromp.seq(open, inner, close)
+            .map(function (x) { return x[1]; });
+    };
 
 })(typeof exports === "undefined" ? this["cromp"] = {} : exports);
