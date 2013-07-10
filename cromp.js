@@ -168,4 +168,8 @@
             .map(function (x) { return x[1]; });
     };
 
+    cromp.many1 = function (p) {
+        return cromp.many(p, 1);
+    };
+
 })(typeof exports === "undefined" ? this["cromp"] = {} : exports);

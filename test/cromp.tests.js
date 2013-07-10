@@ -115,6 +115,18 @@ exports["many parsing"] = function (test) {
     test.done();
 };
 
+exports["many1 parsing"] = function (test) {
+    var parser = cromp.many1(
+            cromp.character("a"));
+    var a = cromp.parse(parser, "a");
+    var aa = cromp.parse(parser, "aa");
+    var b = cromp.parse(parser, "b");
+    test.ok(a.success);
+    test.ok(aa.success);
+    test.ok(!b.success);
+    test.done();
+};
+
 exports["interpose parsing"] = function (test) {
     var parser = cromp.interpose(
             cromp.character("a"),
@@ -235,7 +247,6 @@ exports["parse nested lists"] = function (test) {
 // COMBINATORS
 // cromp.eof
 // cromp.not or notFollowedBy
-// cromp.many1
 // cromp.manyTill
 // cromp.whitespace
 // cromp.string
