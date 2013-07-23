@@ -2,9 +2,10 @@
     "name": "cromp",
     "main": "cromp",
     "devDependencies": {
-        "nodeunit": "~0.8.0"
+        "mocha": "",
+        "chai": ""
     },
     "scripts": {
-        "test": "nodeunit test"
+        "test": "mocha -u tdd -R spec"
     }
 }
