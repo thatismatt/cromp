@@ -3,10 +3,10 @@
     chai.Assertion.includeStack = true;
     var assert = chai.assert;
 
-    suite("cromp", function () {
+    suite("basics", function () {
 
         test("parse character a", function () {
-            var parser = cromp.character("a", function(ch) {
+            var parser = cromp.character("a").map(function(ch) {
                 return "got " + ch;
             });
             var result = cromp.parse(parser, "a").result;
@@ -14,7 +14,7 @@
         });
 
         test("parse character b", function () {
-            var parser = cromp.character("b", function(ch) {
+            var parser = cromp.character("b").map(function(ch) {
                 return "got " + ch;
             });
             var result = cromp.parse(parser, "b").result;
@@ -55,6 +55,12 @@
                 cromp.character("b"));
             var x = cromp.parse(parser, "aa");
             assert.ok(!x.success);
+        });
+
+        test("string parsing", function () {
+            var parser = cromp.string("asdf");
+            var x = cromp.parse(parser, "asdf");
+            assert.ok(x.success);
         });
 
         test("simple choice parsing", function () {
@@ -162,6 +168,10 @@
             assert.ok(!x.success);
             assert.ok(!xa.success);
         });
+
+    });
+
+    suite("examples", function () {
 
         test("parse simple calculator grammar", function () {
             var num = cromp.regex(/[0-9]+/).map(function (m) { return parseInt(m[0], 10); });

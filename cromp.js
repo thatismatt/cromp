@@ -29,6 +29,10 @@
         return this.source[this.index];
     };
 
+    ParseState.prototype.rest = function () {
+        return this.source.substring(this.index);
+    };
+
     ParseState.prototype.forward = function (x) {
         return new ParseState(this.source, this.index + (x || 1));
     };
@@ -45,7 +49,7 @@
         };
     }
 
-    function fail (state) {
+    function fail (state, message) {
         return {
             state: state,
             success: false
@@ -67,7 +71,7 @@
                     return x.success
                         ? (agg.result.push(x.result),
                            success(agg.result, x.state))
-                        : fail(state);
+                        : fail(state, x.message);
                 }, success([], state));
         }
 
@@ -83,7 +87,7 @@
                     if (agg.success) return agg;
                     var x = p.parse(state);
                     return x.success ? x : agg;
-                }, fail(state));
+                }, fail(state, "choose failed to parse"));
         }
 
         return new Parser(parse);
@@ -106,7 +110,7 @@
             }
             return result.length >= (min || 0)
                 ? success(result, s)
-                : fail(state);
+                : fail(state, "many failed to parse");
         });
     };
 
@@ -120,7 +124,7 @@
                 result.unshift(a.result);
                 return success(result, x.state);
             } else {
-                return fail(state);
+                return fail(state, "interpose failed to parse");
             }
         });
     };
@@ -134,27 +138,33 @@
                     ? rest(success(n.result[0](m.result, n.result[1]), n.state))
                     : success(m.result, m.state);
             }
-            return l.success ? rest(l) : fail(state);
+            return l.success ? rest(l) : fail(state, "chainl failed to parse");
         });
     };
 
-    cromp.character = function (ch, f) {
-        f = f || id;
+    cromp.character = function (ch) {
         return new Parser(function (state) {
             return state.current() === ch
-                ? success(f(ch), state.forward())
-                : fail(state);
+                ? success(ch, state.forward())
+                : fail(state, "character failed to parse, found '" + state.current() + "' expected '" + ch + "'.");
+        });
+    };
+
+    cromp.string = function (str) {
+        return new Parser(function (state) {
+            return state.rest().indexOf(str) === 0
+                ? success(str, state.forward(str.length))
+                : fail("string failed to parse, found '" + state.rest().substring(0, str.length) + "' expected '" + str + "'.");
         });
     };
 
     cromp.regex = function (re) {
         return new Parser(function (state) {
-            var rest = state.source.substring(state.index);
-            var match = re.exec(rest);
+            var match = re.exec(state.rest());
             if (match && match.index === 0) {
                 return success(match, state.forward(match[0].length));
             } else {
-                return fail(state);
+                return fail(state, "regex failed to parse");
             }
         });
     };
