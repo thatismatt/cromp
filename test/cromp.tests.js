@@ -247,10 +247,11 @@ exports["parse nested lists"] = function (test) {
 // COMBINATORS
 // cromp.eof
 // cromp.not or notFollowedBy
-// cromp.manyTill
+// cromp.until
 // cromp.whitespace
 // cromp.string
-// cromp.between(open, close, p)
+// cromp.characters
+// cromp.any
 
 // ERRORS
 // incomplete parse
