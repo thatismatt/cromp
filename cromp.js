@@ -52,7 +52,8 @@
     function fail (state, message) {
         return {
             state: state,
-            success: false
+            success: false,
+            message: message
         };
     }
 
@@ -87,7 +88,7 @@
                     if (agg.success) return agg;
                     var x = p.parse(state);
                     return x.success ? x : agg;
-                }, fail(state, "choose failed to parse"));
+                }, fail(state, "choose failed to parse at " + state.index));
         }
 
         return new Parser(parse);
@@ -110,7 +111,7 @@
             }
             return result.length >= (min || 0)
                 ? success(result, s)
-                : fail(state, "many failed to parse");
+                : fail(state, "many failed to parse at " + state.index);
         });
     };
 
@@ -124,7 +125,7 @@
                 result.unshift(a.result);
                 return success(result, x.state);
             } else {
-                return fail(state, "interpose failed to parse");
+                return fail(state, "interpose failed to parse at " + state.index);
             }
         });
     };
@@ -138,7 +139,7 @@
                     ? rest(success(n.result[0](m.result, n.result[1]), n.state))
                     : success(m.result, m.state);
             }
-            return l.success ? rest(l) : fail(state, "chainl failed to parse");
+            return l.success ? rest(l) : fail(state, "chainl failed to parse at " + state.index);
         });
     };
 
@@ -146,7 +147,7 @@
         return new Parser(function (state) {
             return state.current() === ch
                 ? success(ch, state.forward())
-                : fail(state, "character failed to parse, found '" + state.current() + "' expected '" + ch + "'.");
+                : fail(state, "character failed to parse, found '" + state.current() + "' expected '" + ch + "' at " + state.index);
         });
     };
 
@@ -154,7 +155,7 @@
         return new Parser(function (state) {
             return state.rest().indexOf(str) === 0
                 ? success(str, state.forward(str.length))
-                : fail("string failed to parse, found '" + state.rest().substring(0, str.length) + "' expected '" + str + "'.");
+                : fail("string failed to parse, found '" + state.rest().substring(0, str.length) + "' expected '" + str + "' at " + state.index);
         });
     };
 
@@ -164,7 +165,7 @@
             if (match && match.index === 0) {
                 return success(match, state.forward(match[0].length));
             } else {
-                return fail(state, "regex failed to parse");
+                return fail(state, "regex '" + re + "' failed to parse at " + state.index);
             }
         });
     };
