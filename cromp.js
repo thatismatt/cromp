@@ -69,10 +69,12 @@
                 function (agg, p) {
                     if (!agg.success) return agg;
                     var x = p.parse(agg.state);
-                    return x.success
-                        ? (agg.result.push(x.result),
-                           success(agg.result, x.state))
-                        : fail(state, x.message);
+                    if (x.success) {
+                        agg.result.push(x.result);
+                        return success(agg.result, x.state);
+                    } else {
+                        return fail(state, x.message);
+                    }
                 }, success([], state));
         }
 
