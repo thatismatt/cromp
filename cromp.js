@@ -20,6 +20,21 @@
         });
     };
 
+    Parser.prototype.mapState = function (f) {
+        var self = this;
+        return new Parser(function (state) {
+            var x = self.parse(state);
+            return x.success ? f(state, x) : x;
+        });
+    };
+
+    Parser.prototype.indexed = function () {
+        return this.mapState(function (state, x) {
+            x.start = state.index;
+            return x;
+        });
+    };
+
     function ParseState (source, index) {
         this.source = source;
         this.index = index || 0;

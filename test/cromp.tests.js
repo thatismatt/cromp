@@ -169,6 +169,13 @@
             assert.ok(!xa.success);
         });
 
+        test("indexed parse result", function () {
+            var parser = cromp.character("a").indexed();
+            var a = cromp.parse(parser, "a");
+            assert.ok(a.success);
+            assert.deepEqual(0, a.start);
+        });
+
     });
 
     suite("examples", function () {
