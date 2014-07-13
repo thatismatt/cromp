@@ -174,6 +174,7 @@
             var a = cromp.parse(parser, "a");
             assert.ok(a.success);
             assert.deepEqual(0, a.start);
+            assert.deepEqual(1, a.end);
         });
 
     });

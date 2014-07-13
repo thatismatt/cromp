@@ -31,6 +31,7 @@
     Parser.prototype.indexed = function () {
         return this.mapState(function (state, x) {
             x.start = state.before.index;
+            x.end = state.after.index;
             return x;
         });
     };
