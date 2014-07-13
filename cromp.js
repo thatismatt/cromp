@@ -24,13 +24,13 @@
         var self = this;
         return new Parser(function (state) {
             var x = self.parse(state);
-            return x.success ? f(state, x) : x;
+            return x.success ? f({ before: state, after: x.state }, x) : x;
         });
     };
 
     Parser.prototype.indexed = function () {
         return this.mapState(function (state, x) {
-            x.start = state.index;
+            x.start = state.before.index;
             return x;
         });
     };
