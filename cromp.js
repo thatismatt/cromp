@@ -172,7 +172,7 @@
         return new Parser(function (state) {
             return state.rest().indexOf(str) === 0
                 ? success(str, state.forward(str.length))
-                : fail("string failed to parse, found '" + state.rest().substring(0, str.length) + "' expected '" + str + "' at " + state.index);
+                : fail(state, "string failed to parse, found '" + state.rest().substring(0, str.length) + "' expected '" + str + "' at " + state.index);
         });
     };
 
